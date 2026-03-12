@@ -20,8 +20,10 @@ api.interceptors.response.use(
   (error) => {
     const status = error?.response?.status;
     if (status === 401) {
+      const reqUrl = error?.config?.url || "";
+      const baseURL = error?.config?.baseURL || "";
       localStorage.removeItem("admin_token");
-      message.error("登录已失效，请重新登录");
+      message.error(`登录已失效，请重新登录（401: ${baseURL}${reqUrl}）`);
       if (location.pathname !== "/login") {
         location.href = "/login";
       }
