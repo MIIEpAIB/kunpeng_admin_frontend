@@ -12,6 +12,16 @@ type Props = {
 
 export default function ImageUpload(props: Props) {
   const [loading, setLoading] = useState(false);
+  const apiBase = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
+
+  const normalizeImageUrl = (raw?: string) => {
+    if (!raw) return "";
+    // 已是绝对地址时直接返回
+    if (/^https?:\/\//i.test(raw)) return raw;
+    // 后端返回 /static/uploads/xxx 时，拼接 API 域名，避免走 5173
+    if (raw.startsWith("/")) return `${apiBase}${raw}`;
+    return `${apiBase}/${raw}`;
+  };
 
   const fileList = useMemo(() => {
     if (!props.value) return [];
@@ -20,10 +30,10 @@ export default function ImageUpload(props: Props) {
         uid: "-1",
         name: "image",
         status: "done" as const,
-        url: props.value
+        url: normalizeImageUrl(props.value)
       }
     ];
-  }, [props.value]);
+  }, [props.value, apiBase]);
 
   const uploadProps: UploadProps = {
     listType: "picture-card",
@@ -40,7 +50,8 @@ export default function ImageUpload(props: Props) {
         const fd = new FormData();
         fd.append("file", options.file as File);
         const data = await postFormData<{ url: string }>(endpoints.uploadImage, fd);
-        props.onChange?.(data.url);
+        // 存储绝对 URL，确保 admin/mobile 前端都可直接访问
+        props.onChange?.(normalizeImageUrl(data.url));
         options.onSuccess?.(data, options.file as any);
       } catch (e: any) {
         message.error(e?.message || "上传失败");
