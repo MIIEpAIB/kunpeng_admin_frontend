@@ -65,7 +65,7 @@ const AdminLayout = () => {
                 { key: "/operation/payment-qrcode", label: <Link to="/operation/payment-qrcode">收款码配置</Link> },
                 { key: "/operation/home-category", label: <Link to="/operation/home-category">首页分类</Link> },
                 { key: "/operation/banners", label: <Link to="/operation/banners">首页轮播图</Link> },
-                { key: "/operation/contact", label: <Link to="/operation/contact">专家联系方式</Link> },
+                { key: "/operation/contact", label: <Link to="/operation/contact">专家信息</Link> },
                 { key: "/operation/exchange-rate", label: <Link to="/operation/exchange-rate">虚拟币汇率</Link> }
               ]
             },
